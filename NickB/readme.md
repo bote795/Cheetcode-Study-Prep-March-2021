@@ -730,3 +730,283 @@ const isValidBST = function (root) {
   return dfs(root, -Infinity, Infinity);
 };
 ```
+
+# Validate Binary Search Tree
+
+```javascript
+var isValidBST = function (root) {
+  const helper = (current, max = Infinity, min = -Infinity) => {
+    if (current === null) return true;
+
+    if (current.val < max && current.val > min) {
+      return (
+        helper(current.left, current.val, min) &&
+        helper(current.right, max, current.val)
+      );
+    } else {
+      return false;
+    }
+  };
+  return helper(root);
+};
+```
+
+# 2D-Arrays
+
+## DFS in 2D-Arrays
+
+```javascript
+function dfs(matrix, row, column, seen, values) {
+  if (
+    row > matrix.length - 1 ||
+    row < 0 ||
+    column > matrix[0].length - 1 ||
+    column < 0 ||
+    seen[row][column]
+  )
+    return;
+  values.push(matrix[row][column]);
+  seen[row][column] = true;
+  dfs(matrix, row + 1, column, seen, values);
+  dfs(matrix, row - 1, column, seen, values);
+  dfs(matrix, row, column - 1, seen, values);
+  dfs(matrix, row, column + 1, seen, values);
+}
+var dfs2Darray = function (matrix) {
+  const seen = new Array(matrix.length).fill(
+    new Array(matrix[0].length).fill(false)
+  );
+  const values = [];
+  dfs(matrix, 0, 0, seen, values);
+  return values;
+};
+```
+
+## BFS in 2D
+
+```javascript
+var bfs2Darray = function(matrix) {
+  const seen = new Array(matrix.length).fill(
+    new Array(matrix[0].length).fill(false)
+  );
+  const values = [];
+  let queue=[[0, 0]];
+
+  while(queue.length >0){
+      let [row, col] = queue.shift();
+      if(seen[row][col] ||
+          row > matrix.length - 1 ||
+          row < 0 ||
+          column > matrix[0].length - 1 ||
+          column < 0 ){
+        continue;
+      }
+      values.push(matrx[row][col]);
+      seen[row][col]=true;
+      let directions = [
+        [-1, 0],
+        [1,0],
+        [0,1],
+        [0,-1]
+      ]
+      for(int i=0; i < directions.length; i++)
+        queue.push([row + directions[i][0], col + directions[i][1]])
+
+  }
+
+  return values;
+}
+```
+
+# Number Of Islands (Medium)
+
+```javascript
+//BFS
+function pushIfValid(q, rows, cols, x, y) {
+  if (x >= 0 && x < rows && y >= 0 && y < cols) {
+    q.push([x, y]);
+  }
+}
+
+function helperBfs(binaryMatrix, i, j, rows, cols) {
+  let queue = [[i, j]];
+  while (queue.length) {
+    let item = queue.shift();
+    const [x, y] = item;
+    if (binaryMatrix[x][y] === 1) {
+      binaryMatrix[x][y] = -1;
+      pushIfValid(queue, rows, cols, x - 1, y);
+      pushIfValid(queue, rows, cols, x, y - 1);
+      pushIfValid(queue, rows, cols, x + 1, y);
+      pushIfValid(queue, rows, cols, x, y + 1);
+    }
+  }
+  return null;
+}
+
+function getNumberOfIslands(binaryMatrix) {
+  let rows = binaryMatrix.length;
+  let cols = binaryMatrix[0].length;
+  let total = 0;
+  for (let x = 0; x < binaryMatrix.length; x++) {
+    for (let y = 0; y < binaryMatrix[x].length; y++) {
+      // need to check if its been visited
+      if (binaryMatrix[x][y] == 1) {
+        helperBfs(binaryMatrix, x, y, rows, cols);
+        total++;
+      }
+    }
+  }
+  return total;
+}
+
+//DFS
+function sinkIsland(binaryMatrix, x, y, rows, cols){
+  if(binaryMatrix[x][y] === 0 ||
+      x >= rows ||
+      x < 0 ||
+      y > cols ||
+      y < 0
+    )
+    return;
+    binaryMatrix[x][y]=0;
+    let directions = [
+        [-1, 0],
+        [1,0],
+        [0,1],
+        [0,-1]
+    ];
+    for(int i=0; i < directions.length; i++)
+      sinkIsland([row + directions[i][0], col + directions[i][1]])
+
+}
+
+
+function getNumberOfIslands(binaryMatrix) {
+  let rows = binaryMatrix.length;
+  let cols = binaryMatrix[0].length;
+  let total = 0;
+  for (let x = 0; x < rows; x++) {
+    for (let y = 0; y < cols; y++) {
+      // need to check if its been visited
+      if (binaryMatrix[x][y] == 1) {
+        sinkIsland(binaryMatrix, x, y, rows, cols);
+        total++;
+      }
+    }
+  }
+  return total;
+}
+
+```
+
+# Rotting Oranges
+
+```javascript
+var orangesRotting = function (grid) {
+  let row = grid.length;
+  let col = grid[0].length;
+  let queue = [];
+  let freshOranges = 0;
+
+  const ROTTEN = 2;
+  const FRESH = 1;
+  const EMPTY = 0;
+
+  let maxMins = 0;
+  for (let x = 0; x < row; x++) {
+    for (let y = 0; y < col; y++) {
+      if (grid[x][y] === ROTTEN) {
+        queue.push([x, y]);
+      } else if (grid[x][y] === FRESH) {
+        freshOranges++;
+      }
+    }
+  }
+  let directions = [
+    [-1, 0],
+    [1, 0],
+    [0, 1],
+    [0, -1],
+  ];
+  let currentQueueSize = queue.length;
+  while (queue.length > 0) {
+    if (currentQueueSize === 0) {
+      currentQueueSize = queue.length;
+      maxMins++;
+    }
+    const [x, y] = queue.shift();
+    currentQueueSize--;
+    for (let i = 0; i < directions.length; i++) {
+      const currentDir = directions[i];
+      const nextX = x + directions[i][0];
+      const nextY = y + directions[i][1];
+      if (
+        nextX < 0 ||
+        nextX >= grid.length ||
+        nextY < 0 ||
+        nextY >= grid[0].length
+      ) {
+        continue;
+      }
+      if (grid[nextX][nextY] == FRESH) {
+        grid[nextX][nextY] = ROTTEN;
+        freshOranges--;
+        queue.push([nextX, nextY]);
+      }
+    }
+  }
+
+  if (freshOranges !== 0) return -1;
+
+  return maxMins;
+};
+```
+
+# Walls and Gates
+
+```javascript
+// time O(M^2 N^2) and space O(MN) keep gonig through all empty rooms
+// time O(MN) and O(MN)
+var wallsAndGates = function (rooms) {
+  const EMPTY = 2147483647;
+  const GATE = 0;
+  const DIRECTIONS = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+  ];
+  let rows = rooms.length;
+  let cols = rooms[0].length;
+  let queue = [];
+  for (let x = 0; x < rows; x++) {
+    for (let y = 0; y < cols; y++) {
+      if (rooms[x][y] === GATE) {
+        queue.push([x, y]);
+      }
+    }
+  }
+  while (queue.length > 0) {
+    let [x, y] = queue.shift();
+    for (let i = 0; i < DIRECTIONS.length; i++) {
+      let newX = x + DIRECTIONS[i][0];
+      let newY = y + DIRECTIONS[i][1];
+
+      if (
+        newX < 0 ||
+        newY < 0 ||
+        newX >= rooms.length ||
+        newY >= rooms[0].length ||
+        rooms[newX][newY] !== EMPTY
+      ) {
+        continue;
+      }
+
+      rooms[newX][newY] = rooms[x][y] + 1;
+      queue.push([newX, newY]);
+    }
+  }
+  return rooms;
+};
+```
