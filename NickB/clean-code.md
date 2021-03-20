@@ -300,7 +300,75 @@ var findMissingRanges = function (vals, start, end) {
 ## 14 ONE EDIT DISTANCE
 
 ```javascript
+var isOneEditDistance = function(s, t) {
+    if (s === t || Math.abs(s.length - t.length) > 1) return false;
+    let i = 0;
+    let j = 0;
+    let isEdited = false;
+    while (i < s.length && j < t.length) {
+        if (s[i] === t[j]) {
+            i++;
+            j++;
+        } else if (isEdited) {
+            return false;
+        } else if (s.length < t.length) {  // insert into s or delete from t
+            j++;
+            isEdited = true;
+        } else if (s.length > t.length) {  // insert into t or delete form s
+            i++;
+            isEdited = true;
+        } else {  // edit s or t
+            i++;
+            j++;
+            isEdited = true;
+        }
+    }
+    return true;
 
+var isOneEditDistance = function(s, t) {
+     if (s === t) return false;
+       let sLength = s.length;
+       let tLength = t.length;
+       if( tLength > sLength){
+           return this.isOneEditDistance(t,s);
+       }
+       if( sLength - tLength > 1){
+           return false;
+       }
+
+        let tI = 0;
+        let cost =0;
+        let sI=0
+        while(sI < sLength || tI < tLength){
+            if(s[sI] !== t[tI]){
+                if(sLength > tLength){ // simulate delete
+                    cost++;
+                    sI++;
+                }
+                else if( sLength < tLength){ // simulate insert
+                    cost++;
+                    sI++;
+                }
+                else {
+                    sI++;
+                    tI++;
+                    cost++;
+                }
+
+            }
+            else {
+                sI++;
+                tI++;
+            }
+
+
+            if(cost > 1){
+                return false;
+            }
+        }
+    if( cost === 0 ) return false;
+    return true;
+};
 ```
 
 ## 15 READ N CHARACTERS GIVEN READ4
@@ -423,11 +491,68 @@ var swapPairs = function (head) {
 
 ```
 
-# 39. Min Stack
+# 25 Validate Binary Search Tree
+
+```javascript
+// O(N) and O(N)
+var validBST = function (root) {
+  const validateBSTRecursive = function (
+    root,
+    min = -Infinity,
+    max = Infinity
+  ) {
+    if (root === null) return true;
+    if (root.val > min && root.val < max) {
+      return (
+        validateBSTRecursive(root.left, min, root.val) &&
+        validateBSTRecursive(root.right, root.val, max)
+      );
+    }
+
+    return false;
+  };
+  return validateBSTRecursive(root);
+};
+```
+
+# 26. Maximum Depth of Binary tree
+
+```javascript
+// O(N) and O(H) where h is size of level with bfs
+// O(N) with space O(logn)DFS
+var depthOfBinaryTree = function(root){
+
+
+      if(root === null) return 0;
+      return Math.max(calculateDepth(root.left), calculateDepth(root.right))+1;}
+};
+
+```
+
+# 27. Min Depth of binary Tree
+
+```javascript
+//DFS run time: O(n), space: (logn)
+var minDepthofBinaryTree = function (root) {
+  if (root === null) return 0;
+  if (root.left === null) return minDepthofBinaryTree(root.right) + 1;
+  if (root.right === null) return minDepthofBinaryTree(root.left) + 1;
+  return (
+    Math.min(
+      minDepthofBinaryTree(root.left),
+      minDepthofBinaryTree(root.right)
+    ) + 1
+  );
+};
+```
+
+# 28 Balanced Binary Tree
 
 ```javascript
 
 ```
+
+# 39. Min Stack
 
 # 40. Evaluate Reverse Polish Notation
 
