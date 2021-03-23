@@ -2,12 +2,13 @@
 
 ```javascript
 // usually finding a max or min in a contiguous array or string
+// running time O(N) | space O(1)
 function basic_sliding_window(k, arr) {
-  let maxSum = 0,
-    windowSum = 0,
+  let maxSum = 0, // max or min usually
+    windowSum = 0, // running window sum, min ,length, etc
     windowStart = 0;
 
-  for (window_end = 0; window_end < arr.length; window_end++) {
+  for (let window_end = 0; window_end < arr.length; window_end++) {
     windowSum += arr[window_end]; // add the next element
     // slide the window, we don't need to slide if we've not hit the required window size of 'k'
     if (window_end >= k - 1) {

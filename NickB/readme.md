@@ -877,7 +877,7 @@ function sinkIsland(binaryMatrix, x, y, rows, cols){
         [0,-1]
     ];
     for(int i=0; i < directions.length; i++)
-      sinkIsland([row + directions[i][0], col + directions[i][1]])
+      sinkIsland(binaryMatrix, row + directions[i][0], col + directions[i][1], rows, cols)
 
 }
 
@@ -1005,6 +1005,65 @@ var wallsAndGates = function (rooms) {
 
       rooms[newX][newY] = rooms[x][y] + 1;
       queue.push([newX, newY]);
+    }
+  }
+  return rooms;
+};
+```
+
+```javascript
+// time O(MN) and space O(1)
+var wallsAndGates = function (rooms) {
+  if (rooms.length == 0) return rooms;
+  const GATE = 0;
+  const WALL = -1;
+  const EMPTY = 2147483647;
+  const DIRECTIONS = [
+    [-1, 0],
+    [1, 0],
+    [0, 1],
+    [0, -1],
+  ];
+
+  function isNotInBounds(rooms, rows, cols, r, c) {
+    return r < 0 || c < 0 || r >= rows || c >= cols;
+  }
+
+  function findDistanceToGate(rooms, rows, cols, r, c) {
+    let queue = [[r, c]];
+    let distance = 1;
+    while (queue.length > 0) {
+      let levelLength = queue.length;
+      for (let i = 0; i < levelLength; i++) {
+        let [currR, currC] = queue.shift();
+        for (let j = 0; j < DIRECTIONS.length; j++) {
+          let [changeR, changeC] = DIRECTIONS[j];
+          let newR = currR + changeR;
+          let newC = currC + changeC;
+          //if its in bounds and if its empty room
+          if (isNotInBounds(rooms, rows, cols, newR, newC)) {
+            continue;
+          }
+          //if distance is less than the value of the rom
+          // set room to new distance
+          //add room to queue
+          if (rooms[newR][newC] >= distance + 1) {
+            rooms[newR][newC] = distance;
+            queue.push([newR, newC]);
+          }
+        }
+      }
+      distance++;
+    }
+  }
+
+  let rows = rooms.length;
+  let cols = rooms[0].length;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (rooms[r][c] === GATE) {
+        findDistanceToGate(rooms, rows, cols, r, c);
+      }
     }
   }
   return rooms;
